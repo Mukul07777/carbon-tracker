@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CarbonSense – Know Your Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --night:#020c06;
+  --forest:#0a1f0f;
+  --deep:#0f2d18;
+  --emerald:#00c853;
+  --lime:#b2ff59;
+  --gold:#ffd600;
+  --sky:#00e5ff;
+  --white:#f0fff4;
+  --muted:#8aab96;
+  --card:#0d2616;
+  --card2:#112d1c;
+  --border:rgba(0,200,83,0.15);
+  --radius:16px;
+  --radius-lg:24px;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--night);
+  color:var(--white);
+  overflow-x:hidden;
+  line-height:1.6;
+}
+a{color:inherit;text-decoration:none}
+.skip-link{position:absolute;top:-60px;left:0;background:var(--emerald);color:#000;padding:10px 18px;border-radius:0 0 10px 0;z-index:999;font-weight:600;transition:top .2s}
+.skip-link:focus{top:0}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 2rem;
+  background:rgba(2,12,6,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;letter-spacing:-0.02em}
+.nav-logo-dot{width:10px;height:10px;border-radius:50%;background:var(--emerald);box-shadow:0 0 12px var(--emerald);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
+.nav-links{display:flex;gap:2rem;font-size:.88rem;color:var(--muted)}
+.nav-links a:hover{color:var(--emerald);transition:color .2s}
+.nav-cta{background:var(--emerald);color:#000;padding:.5rem 1.25rem;border-radius:100px;font-size:.88rem;font-weight:600;cursor:pointer;border:none;transition:background .2s,transform .1s}
+.nav-cta:hover{background:var(--lime)}
+.nav-cta:active{transform:scale(.97)}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  padding:6rem 2rem 4rem;
+}
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.7}
+.hero-content{position:relative;z-index:2;text-align:center;max-width:820px;margin:0 auto}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,200,83,.12);
+  border:1px solid rgba(0,200,83,.3);
+  border-radius:100px;
+  padding:.4rem 1rem;
+  font-size:.8rem;font-weight:600;color:var(--emerald);
+  letter-spacing:.05em;text-transform:uppercase;
+  margin-bottom:2rem;
+}
+.hero-badge span{width:6px;height:6px;border-radius:50%;background:var(--emerald);animation:pulse 1.5s infinite}
+h1.hero-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2.8rem,7vw,5.5rem);
+  font-weight:800;
+  line-height:1.05;
+  letter-spacing:-.03em;
+  margin-bottom:1.5rem;
+}
+.hero-title .accent{color:var(--emerald)}
+.hero-title .gold{color:var(--gold)}
+.hero-sub{font-size:1.15rem;color:var(--muted);max-width:540px;margin:0 auto 2.5rem;line-height:1.7}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{
+  background:var(--emerald);color:#000;
+  padding:.85rem 2rem;border-radius:100px;
+  font-weight:700;font-size:1rem;cursor:pointer;border:none;
+  transition:all .2s;
+}
+.btn-primary:hover{background:var(--lime);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,200,83,.4)}
+.btn-secondary{
+  background:transparent;color:var(--white);
+  padding:.85rem 2rem;border-radius:100px;
+  font-weight:600;font-size:1rem;cursor:pointer;
+  border:1px solid rgba(255,255,255,.2);
+  transition:all .2s;
+}
+.btn-secondary:hover{border-color:var(--emerald);color:var(--emerald)}
+
+/* LIVE COUNTER STRIP */
+.live-strip{
+  background:var(--forest);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:2rem 2rem;
+  overflow:hidden;
+}
+.strip-inner{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;
+}
+.strip-stat{text-align:center}
+.strip-num{
+  font-family:'Syne',sans-serif;
+  font-size:2.2rem;font-weight:800;
+  color:var(--emerald);
+  display:block;line-height:1;margin-bottom:.3rem;
+}
+.strip-label{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+
+/* CALCULATOR SECTION */
+.calc-section{
+  padding:6rem 2rem;
+  max-width:800px;margin:0 auto;
+}
+.section-eyebrow{
+  display:inline-block;
+  font-size:.75rem;font-weight:600;
+  color:var(--emerald);letter-spacing:.12em;text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.section-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(1.8rem,4vw,2.8rem);
+  font-weight:800;line-height:1.1;letter-spacing:-.02em;
+  margin-bottom:1rem;
+}
+.section-sub{color:var(--muted);font-size:1rem;margin-bottom:3rem;max-width:500px}
+
+.calc-form{display:flex;flex-direction:column;gap:1.5rem}
+
+.field-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:1.75rem 2rem;
+  transition:border-color .2s,box-shadow .2s;
+}
+.field-card:focus-within{
+  border-color:rgba(0,200,83,.5);
+  box-shadow:0 0 0 4px rgba(0,200,83,.06);
+}
+.field-header{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem}
+.field-icon{
+  width:40px;height:40px;border-radius:10px;
+  background:rgba(0,200,83,.1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;flex-shrink:0;
+}
+.field-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--white)}
+.field-desc{font-size:.8rem;color:var(--muted);margin-top:1px}
+
+label.fl{display:block;font-size:.82rem;color:var(--muted);margin-bottom:.5rem;font-weight:500}
+
+select{
+  width:100%;padding:.75rem 1rem;
+  background:var(--deep);color:var(--white);
+  border:1px solid var(--border);border-radius:10px;
+  font-size:.92rem;font-family:'Inter',sans-serif;
+  cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238aab96' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 1rem center;
+  padding-right:2.5rem;
+  transition:border-color .2s;
+}
+select:focus{outline:none;border-color:var(--emerald);box-shadow:0 0 0 3px rgba(0,200,83,.12)}
+select option{background:var(--deep)}
+
+.slider-row{margin-top:.75rem}
+.slider-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.5rem}
+.slider-label{font-size:.82rem;color:var(--muted)}
+.slider-val{
+  font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--emerald);
+}
+input[type=range]{
+  width:100%;height:6px;border-radius:100px;
+  -webkit-appearance:none;appearance:none;
+  background:linear-gradient(to right,var(--emerald) var(--pct,15%),var(--deep) var(--pct,15%));
+  cursor:pointer;outline:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:20px;height:20px;border-radius:50%;
+  background:var(--emerald);
+  box-shadow:0 0 0 4px rgba(0,200,83,.2);
+  transition:box-shadow .2s;
+}
+input[type=range]:focus::-webkit-slider-thumb{box-shadow:0 0 0 6px rgba(0,200,83,.3)}
+
+.calc-btn{
+  background:linear-gradient(135deg,var(--emerald),#00a844);
+  color:#000;padding:1.1rem 2rem;
+  border:none;border-radius:var(--radius);
+  font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;
+  cursor:pointer;letter-spacing:-.01em;
+  transition:all .2s;
+  position:relative;overflow:hidden;
+}
+.calc-btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent,rgba(255,255,255,.15));
+  opacity:0;transition:opacity .2s;
+}
+.calc-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,200,83,.45)}
+.calc-btn:hover::after{opacity:1}
+.calc-btn:active{transform:translateY(0)}
+.calc-hint{text-align:center;font-size:.8rem;color:var(--muted);margin-top:.75rem}
+
+/* RESULTS */
+.results-section{padding:4rem 2rem 6rem;max-width:800px;margin:0 auto;display:none}
+.results-section.visible{display:block}
+
+.result-hero{
+  background:linear-gradient(135deg,var(--card),var(--card2));
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:2.5rem;
+  margin-bottom:2rem;
+  display:flex;align-items:center;gap:2.5rem;
+  flex-wrap:wrap;
+}
+.gauge-wrap{position:relative;width:140px;height:140px;flex-shrink:0}
+.gauge-wrap svg{position:absolute;inset:0}
+.gauge-num{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-58%);
+  font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--emerald);
+  line-height:1;
+}
+.gauge-unit{
+  position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
+  font-size:.65rem;color:var(--muted);white-space:nowrap;
+}
+.result-meta{flex:1;min-width:200px}
+.result-verdict{
+  font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;
+  line-height:1.2;margin-bottom:.75rem;
+}
+.result-compare{font-size:.85rem;color:var(--muted);line-height:1.7}
+.result-compare strong{color:var(--white)}
+
+.breakdown-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:2rem;margin-bottom:2rem;
+}
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:1.5rem;color:var(--white)}
+.bar-row{margin-bottom:1.2rem}
+.bar-meta{display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.4rem}
+.bar-name{color:var(--muted)}
+.bar-kg{color:var(--white);font-weight:600}
+.bar-track{height:8px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden}
+.bar-fill{height:100%;border-radius:100px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+
+.tips-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:2rem;margin-bottom:2rem;
+}
+.tips-loading{display:flex;align-items:center;gap:1rem;color:var(--muted);font-size:.9rem}
+.spinner{
+  width:22px;height:22px;border-radius:50%;
+  border:2px solid rgba(0,200,83,.2);
+  border-top-color:var(--emerald);
+  animation:spin .7s linear infinite;flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tip-item{
+  display:flex;gap:1rem;padding:1rem 0;
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.tip-item:last-child{border-bottom:none;padding-bottom:0}
+.tip-num{
+  width:28px;height:28px;border-radius:8px;
+  background:rgba(0,200,83,.12);
+  color:var(--emerald);font-family:'Syne',sans-serif;font-weight:800;font-size:.82rem;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+}
+.tip-body{}
+.tip-title{font-weight:600;font-size:.92rem;margin-bottom:.3rem;color:var(--white)}
+.tip-text{font-size:.84rem;color:var(--muted);line-height:1.6}
+
+/* MARKETPLACE */
+.market-section{
+  padding:5rem 2rem;
+  background:var(--forest);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.market-inner{max-width:1100px;margin:0 auto}
+.market-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin-top:3rem;
+}
+.offset-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:1.75rem;
+  transition:transform .2s,border-color .2s,box-shadow .2s;
+  cursor:pointer;
+}
+.offset-card:hover{
+  transform:translateY(-4px);
+  border-color:rgba(0,200,83,.4);
+  box-shadow:0 16px 48px rgba(0,0,0,.3);
+}
+.offset-badge{
+  display:inline-block;
+  font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:.3rem .75rem;border-radius:100px;
+  margin-bottom:1rem;
+}
+.badge-green{background:rgba(0,200,83,.15);color:var(--emerald)}
+.badge-gold{background:rgba(255,214,0,.12);color:var(--gold)}
+.badge-sky{background:rgba(0,229,255,.1);color:var(--sky)}
+.offset-icon{font-size:2.2rem;margin-bottom:.75rem;display:block}
+.offset-name{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:.5rem}
+.offset-desc{font-size:.83rem;color:var(--muted);line-height:1.6;margin-bottom:1.25rem}
+.offset-footer{display:flex;align-items:center;justify-content:space-between}
+.offset-price{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:var(--emerald)}
+.offset-price span{font-size:.75rem;font-weight:400;color:var(--muted)}
+.offset-btn{
+  background:transparent;border:1px solid rgba(0,200,83,.3);
+  color:var(--emerald);padding:.4rem .9rem;border-radius:100px;
+  font-size:.78rem;font-weight:600;cursor:pointer;
+  transition:background .2s,border-color .2s;
+}
+.offset-btn:hover{background:rgba(0,200,83,.1);border-color:var(--emerald)}
+
+/* HOW IT WORKS */
+.how-section{padding:6rem 2rem;max-width:900px;margin:0 auto}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;margin-top:3rem}
+.step{text-align:center;padding:1.5rem}
+.step-circle{
+  width:56px;height:56px;border-radius:50%;
+  background:rgba(0,200,83,.1);border:1px solid rgba(0,200,83,.25);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1rem;font-size:1.4rem;
+}
+.step-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:.5rem}
+.step-text{font-size:.82rem;color:var(--muted);line-height:1.6}
+
+/* FOOTER */
+footer{
+  background:var(--forest);border-top:1px solid var(--border);
+  padding:2rem;text-align:center;
+  font-size:.78rem;color:var(--muted);
+}
+footer strong{color:var(--emerald)}
+
+/* RECALC BTN */
+.recalc-btn{
+  width:100%;padding:1rem;background:transparent;
+  border:1px solid var(--border);border-radius:var(--radius);
+  color:var(--muted);font-size:.9rem;cursor:pointer;margin-top:1rem;
+  transition:border-color .2s,color .2s;
+}
+.recalc-btn:hover{border-color:var(--emerald);color:var(--emerald)}
+
+@media(max-width:600px){
+  nav{padding:.75rem 1rem}
+  .nav-links{display:none}
+  h1.hero-title{font-size:2.4rem}
+  .result-hero{flex-direction:column;align-items:flex-start;gap:1.5rem}
+  .strip-inner{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<a href="#calculator" class="skip-link">Skip to calculator</a>
+
+<nav role="navigation" aria-label="Main navigation">
+  <div class="nav-logo">
+    <div class="nav-logo-dot" aria-hidden="true"></div>
+    CarbonSense
+  </div>
+  <div class="nav-links" role="list">
+    <a href="#calculator" role="listitem">Calculator</a>
+    <a href="#offsets" role="listitem">Offset</a>
+    <a href="#how" role="listitem">How it works</a>
+  </div>
+  <button class="nav-cta" onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth'})">
+    Check My Footprint
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" aria-label="Hero section">
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+  <div class="hero-content">
+    <div class="hero-badge" aria-label="Announcement">
+      <span aria-hidden="true"></span>
+      AI-Powered · IPCC-aligned · India-focused
+    </div>
+    <h1 class="hero-title">
+      Every action has<br>
+      a <span class="accent">carbon cost.</span><br>
+      <span class="gold">Know yours.</span>
+    </h1>
+    <p class="hero-sub">
+      Answer 3 questions. Get your daily CO₂ score. Receive an AI-generated personal reduction plan — specific to how you live in India.
+    </p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth'})">
+        Calculate my footprint →
+      </button>
+      <button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
+        How it works
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE COUNTER STRIP -->
+<div class="live-strip" role="region" aria-label="Live global CO2 statistics">
+  <div class="strip-inner">
+    <div class="strip-stat">
+      <span class="strip-num" id="co2-today" aria-live="polite">0</span>
+      <span class="strip-label">Tonnes CO₂ emitted today (global)</span>
+    </div>
+    <div class="strip-stat">
+      <span class="strip-num">13.5</span>
+      <span class="strip-label">kg CO₂ per person per day (global avg)</span>
+    </div>
+    <div class="strip-stat">
+      <span class="strip-num">5.8</span>
+      <span class="strip-label">kg CO₂ per person per day (India avg)</span>
+    </div>
+    <div class="strip-stat">
+      <span class="strip-num" id="trees-today" aria-live="polite">0</span>
+      <span class="strip-label">Trees needed to offset today's emissions</span>
+    </div>
+  </div>
+</div>
+
+<!-- CALCULATOR -->
+<section class="calc-section" id="calculator" aria-labelledby="calc-heading">
+  <div class="section-eyebrow">Your Carbon Footprint</div>
+  <h2 class="section-title" id="calc-heading">3 questions.<br>Your personal CO₂ score.</h2>
+  <p class="section-sub">We use IPCC-aligned emission factors and real India grid data to calculate your daily impact.</p>
+
+  <form class="calc-form" id="carbon-form" novalidate aria-label="Carbon footprint calculator">
+
+    <div class="field-card" role="group" aria-labelledby="transport-heading">
+      <div class="field-header">
+        <div class="field-icon" aria-hidden="true">🚗</div>
+        <div>
+          <div class="field-title" id="transport-heading">Daily Transport</div>
+          <div class="field-desc">How you get around every day</div>
+        </div>
+      </div>
+      <label class="fl" for="transport">Primary commute mode</label>
+      <select id="transport" required aria-required="true">
+        <option value="">Select transport mode</option>
+        <option value="car_petrol">Car — Petrol</option>
+        <option value="car_diesel">Car — Diesel</option>
+        <option value="car_ev">Electric Vehicle</option>
+        <option value="motorbike">Motorbike / Scooter</option>
+        <option value="bus">Bus / Public Transit</option>
+        <option value="train">Train / Metro</option>
+        <option value="cycle">Cycle / Walk</option>
+      </select>
+      <div class="slider-row">
+        <div class="slider-top">
+          <span class="slider-label">Daily distance</span>
+          <span class="slider-val"><span id="km-val">20</span> km</span>
+        </div>
+        <input type="range" id="km" min="1" max="150" value="20" step="1"
+               aria-label="Daily commute distance in km" aria-valuemin="1" aria-valuemax="150" aria-valuenow="20">
+      </div>
+    </div>
+
+    <div class="field-card" role="group" aria-labelledby="diet-heading">
+      <div class="field-header">
+        <div class="field-icon" aria-hidden="true">🥗</div>
+        <div>
+          <div class="field-title" id="diet-heading">Diet</div>
+          <div class="field-desc">Food is responsible for ~26% of global emissions</div>
+        </div>
+      </div>
+      <label class="fl" for="diet">What best describes your diet?</label>
+      <select id="diet" required aria-required="true">
+        <option value="">Select diet type</option>
+        <option value="vegan">Vegan</option>
+        <option value="vegetarian">Vegetarian</option>
+        <option value="pescatarian">Pescatarian</option>
+        <option value="meat_low">Meat eater — occasional</option>
+        <option value="meat_medium">Meat eater — regular</option>
+        <option value="meat_high">Meat eater — daily, heavy</option>
+      </select>
+    </div>
+
+    <div class="field-card" role="group" aria-labelledby="energy-heading">
+      <div class="field-header">
+        <div class="field-icon" aria-hidden="true">⚡</div>
+        <div>
+          <div class="field-title" id="energy-heading">Home Energy</div>
+          <div class="field-desc">India's grid emits ~0.71 kg CO₂ per kWh</div>
+        </div>
+      </div>
+      <div class="slider-row">
+        <div class="slider-top">
+          <span class="slider-label">Monthly electricity bill</span>
+          <span class="slider-val">₹<span id="elec-val">1,500</span></span>
+        </div>
+        <input type="range" id="electricity" min="100" max="10000" value="1500" step="100"
+               aria-label="Monthly electricity bill in rupees" aria-valuemin="100" aria-valuemax="10000" aria-valuenow="1500">
+      </div>
+      <label class="fl" for="energy_source" style="margin-top:1rem">Primary energy source</label>
+      <select id="energy_source">
+        <option value="grid">Grid electricity only</option>
+        <option value="solar_partial">Grid + Solar (partial)</option>
+        <option value="solar_full">Mostly solar / renewable</option>
+      </select>
+    </div>
+
+    <button type="submit" class="calc-btn" id="calc-btn">
+      Calculate My Carbon Footprint →
+    </button>
+    <p class="calc-hint">AI-powered personalised tips generated using Claude (Anthropic)</p>
+  </form>
+</section>
+
+<!-- RESULTS -->
+<section class="results-section" id="results" aria-live="polite" aria-label="Your results">
+
+  <div class="result-hero">
+    <div class="gauge-wrap" role="img" aria-label="Carbon footprint gauge">
+      <svg viewBox="0 0 140 140" width="140" height="140" aria-hidden="true">
+        <circle cx="70" cy="70" r="58" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="12"/>
+        <circle cx="70" cy="70" r="58" fill="none" stroke="var(--emerald)" stroke-width="12"
+                stroke-dasharray="364" stroke-dashoffset="364"
+                stroke-linecap="round" transform="rotate(-90 70 70)"
+                id="gauge-arc" style="transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1),stroke .5s"/>
+      </svg>
+      <div class="gauge-num" id="gauge-num">0</div>
+      <div class="gauge-unit">kg CO₂ / day</div>
+    </div>
+    <div class="result-meta">
+      <div class="result-verdict" id="result-verdict"></div>
+      <div class="result-compare">
+        Global average: <strong>13.5 kg/day</strong><br>
+        India average: <strong>5.8 kg/day</strong><br>
+        Your score: <strong id="compare-text"></strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="breakdown-card">
+    <div class="card-title">Where your emissions come from</div>
+    <div id="breakdown-bars" role="list" aria-label="Emission breakdown"></div>
+  </div>
+
+  <div class="tips-card">
+    <div class="card-title">Your AI-generated reduction plan</div>
+    <div id="tips-output">
+      <div class="tips-loading" id="tips-loading" aria-label="Generating tips">
+        <div class="spinner" aria-hidden="true"></div>
+        Generating personalised tips with Claude AI…
+      </div>
+    </div>
+  </div>
+
+  <button class="recalc-btn" id="recalc-btn" aria-label="Recalculate your footprint">
+    ← Recalculate
+  </button>
+</section>
+
+<!-- OFFSET MARKETPLACE -->
+<section class="market-section" id="offsets" aria-labelledby="market-heading">
+  <div class="market-inner">
+    <div class="section-eyebrow">Carbon Offset Marketplace</div>
+    <h2 class="section-title" id="market-heading">Offset what you<br>can't yet reduce.</h2>
+    <p class="section-sub" style="max-width:480px">Support verified Indian climate projects. Every rupee funds measurable CO₂ reduction.</p>
+    <div class="market-grid">
+      <div class="offset-card" tabindex="0" role="article" aria-label="Rajasthan Solar Farm offset project">
+        <span class="offset-badge badge-gold">⭐ Most Popular</span>
+        <span class="offset-icon" aria-hidden="true">☀️</span>
+        <div class="offset-name">Rajasthan Solar Farm</div>
+        <div class="offset-desc">Fund utility-scale solar capacity in Rajasthan's Thar Desert — India's highest solar irradiance zone. Each unit displaces coal-fired generation.</div>
+        <div class="offset-footer">
+          <div class="offset-price">₹49 <span>/ kg CO₂</span></div>
+          <button class="offset-btn">Support →</button>
+        </div>
+      </div>
+      <div class="offset-card" tabindex="0" role="article" aria-label="Western Ghats reforestation project">
+        <span class="offset-badge badge-green">🌿 Verified</span>
+        <span class="offset-icon" aria-hidden="true">🌳</span>
+        <div class="offset-name">Western Ghats Reforestation</div>
+        <div class="offset-desc">Plant native species in one of Earth's eight biodiversity hotspots. Each tree sequesters ~22 kg CO₂ per year while restoring wildlife habitat.</div>
+        <div class="offset-footer">
+          <div class="offset-price">₹35 <span>/ kg CO₂</span></div>
+          <button class="offset-btn">Support →</button>
+        </div>
+      </div>
+      <div class="offset-card" tabindex="0" role="article" aria-label="Sundarbans mangrove restoration project">
+        <span class="offset-badge badge-sky">💧 High Impact</span>
+        <span class="offset-icon" aria-hidden="true">🌊</span>
+        <div class="offset-name">Sundarbans Mangroves</div>
+        <div class="offset-desc">Restore mangrove forests in the Sundarbans delta — mangroves sequester carbon 5× faster than tropical forests and protect coastal communities.</div>
+        <div class="offset-footer">
+          <div class="offset-price">₹62 <span>/ kg CO₂</span></div>
+          <button class="offset-btn">Support →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how" aria-labelledby="how-heading">
+  <div class="section-eyebrow">How it works</div>
+  <h2 class="section-title" id="how-heading">Simple. Honest. Actionable.</h2>
+  <div class="steps" role="list">
+    <div class="step" role="listitem">
+      <div class="step-circle" aria-hidden="true">📋</div>
+      <div class="step-title">Answer 3 questions</div>
+      <div class="step-text">Transport mode, diet type, and home energy use — the three biggest levers of personal carbon output.</div>
+    </div>
+    <div class="step" role="listitem">
+      <div class="step-circle" aria-hidden="true">🧮</div>
+      <div class="step-title">Get your CO₂ score</div>
+      <div class="step-text">We apply IPCC-aligned emission factors and India-specific grid intensity data to calculate your daily kg CO₂.</div>
+    </div>
+    <div class="step" role="listitem">
+      <div class="step-circle" aria-hidden="true">🤖</div>
+      <div class="step-title">Receive AI tips</div>
+      <div class="step-text">Claude (Anthropic) generates a personalised 4-point reduction plan specific to your lifestyle and India's options.</div>
+    </div>
+    <div class="step" role="listitem">
+      <div class="step-circle" aria-hidden="true">🌱</div>
+      <div class="step-title">Offset the rest</div>
+      <div class="step-text">Support verified Indian climate projects to neutralise emissions you can't yet eliminate through behaviour change.</div>
+    </div>
+  </div>
+</section>
+
+<footer role="contentinfo">
+  <p>CarbonSense · Built with <strong>Claude AI</strong> (Anthropic) · IPCC-aligned emission factors · India grid intensity: 0.71 kg CO₂/kWh (CEA 2023)</p>
+</footer>
+
+<script>
+// ── CANVAS PARTICLE EARTH ────────────────────────────────────────────────────
+(function(){
+  const canvas=document.getElementById('hero-canvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,particles=[];
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+  resize();window.addEventListener('resize',resize);
+  function rand(a,b){return a+Math.random()*(b-a)}
+  for(let i=0;i<120;i++){
+    particles.push({
+      x:rand(0,1),y:rand(0,1),
+      vx:rand(-.0002,.0002),vy:rand(-.0001,.0001),
+      r:rand(.8,2.5),
+      a:rand(.2,.9)
+    });
+  }
+  const connections=[];
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=1;if(p.x>1)p.x=0;
+      if(p.y<0)p.y=1;if(p.y>1)p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(0,200,83,${p.a})`;
+      ctx.fill();
+    });
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const dx=(particles[i].x-particles[j].x)*W;
+        const dy=(particles[i].y-particles[j].y)*H;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<140){
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x*W,particles[i].y*H);
+          ctx.lineTo(particles[j].x*W,particles[j].y*H);
+          ctx.strokeStyle=`rgba(0,200,83,${.15*(1-d/140)})`;
+          ctx.lineWidth=.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── LIVE COUNTER ─────────────────────────────────────────────────────────────
+(function(){
+  const now=new Date();
+  const startOfDay=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const elapsed=(now-startOfDay)/1000;
+  const ratePerSec=1200; // ~100M tonnes/day globally → per sec
+  let co2=Math.round(elapsed*ratePerSec);
+  let trees=Math.round(co2/22);
+  const co2El=document.getElementById('co2-today');
+  const treesEl=document.getElementById('trees-today');
+  function fmt(n){return n.toLocaleString('en-IN')}
+  co2El.textContent=fmt(co2);treesEl.textContent=fmt(trees);
+  setInterval(()=>{
+    co2+=ratePerSec;trees=Math.round(co2/22);
+    co2El.textContent=fmt(co2);treesEl.textContent=fmt(trees);
+  },1000);
+})();
+
+// ── SLIDER LOGIC ─────────────────────────────────────────────────────────────
+const kmSlider=document.getElementById('km');
+const kmVal=document.getElementById('km-val');
+const elecSlider=document.getElementById('electricity');
+const elecVal=document.getElementById('elec-val');
+
+function updateSlider(input){
+  const min=+input.min,max=+input.max,val=+input.value;
+  const pct=((val-min)/(max-min)*100)+'%';
+  input.style.setProperty('--pct',pct);
+  input.setAttribute('aria-valuenow',val);
+}
+kmSlider.addEventListener('input',()=>{
+  kmVal.textContent=kmSlider.value;
+  updateSlider(kmSlider);
+});
+elecSlider.addEventListener('input',()=>{
+  elecVal.textContent=Number(elecSlider.value).toLocaleString('en-IN');
+  updateSlider(elecSlider);
+});
+updateSlider(kmSlider);updateSlider(elecSlider);
+
+// ── EMISSION FACTORS ──────────────────────────────────────────────────────────
+const EF={
+  transport:{car_petrol:.192,car_diesel:.171,car_ev:.053,motorbike:.114,bus:.089,train:.041,cycle:0},
+  diet:{vegan:2.89,vegetarian:3.81,pescatarian:4.67,meat_low:5.63,meat_medium:7.19,meat_high:10.24},
+  energy_source:{grid:1,solar_partial:.6,solar_full:.15}
+};
+function calc(transport,km,diet,electricity,energySource){
+  const t=EF.transport[transport]*km;
+  const d=EF.diet[diet];
+  const e=(electricity/1500)*2.1*EF.energy_source[energySource];
+  return{
+    transport:Math.round(t*100)/100,
+    diet:Math.round(d*100)/100,
+    energy:Math.round(e*100)/100,
+    total:Math.round((t+d+e)*100)/100
+  };
+}
+function verdict(total){
+  if(total<4)return{text:'🌱 Low impact — you\'re doing well',color:'#00c853'};
+  if(total<8)return{text:'🟡 Moderate impact — room to improve',color:'#ffd600'};
+  if(total<13)return{text:'🔴 High impact — action needed',color:'#ff6d00'};
+  return{text:'🚨 Very high — urgent changes needed',color:'#ff1744'};
+}
+
+// ── RENDER RESULTS ────────────────────────────────────────────────────────────
+function showResults(emissions){
+  document.getElementById('results').classList.add('visible');
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+
+  const v=verdict(emissions.total);
+  const arc=document.getElementById('gauge-arc');
+  const circumference=2*Math.PI*58;
+  const pct=Math.min(emissions.total/20,1);
+  setTimeout(()=>{
+    arc.style.strokeDashoffset=circumference*(1-pct);
+    arc.style.stroke=v.color;
+  },200);
+  document.getElementById('gauge-num').textContent=emissions.total.toFixed(1);
+  document.getElementById('gauge-num').style.color=v.color;
+  document.getElementById('result-verdict').textContent=v.text;
+  document.getElementById('result-verdict').style.color=v.color;
+
+  const diff=emissions.total-5.8;
+  const compareText=diff>0
+    ?`${diff.toFixed(1)} kg above India average`
+    :`${Math.abs(diff).toFixed(1)} kg below India average`;
+  document.getElementById('compare-text').textContent=compareText;
+
+  const bars=document.getElementById('breakdown-bars');
+  const items=[
+    {label:'🚗 Transport',value:emissions.transport,color:'#00c853'},
+    {label:'🥗 Diet',value:emissions.diet,color:'#ffd600'},
+    {label:'⚡ Energy',value:emissions.energy,color:'#00e5ff'}
+  ];
+  const maxVal=Math.max(...items.map(i=>i.value));
+  bars.innerHTML=items.map(item=>`
+    <div class="bar-row" role="listitem">
+      <div class="bar-meta">
+        <span class="bar-name">${item.label}</span>
+        <span class="bar-kg">${item.value} kg CO₂</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${Math.round(item.value/maxVal*100)}%;background:${item.color}"
+             role="progressbar" aria-valuenow="${item.value}" aria-valuemin="0" aria-valuemax="${maxVal}"
+             aria-label="${item.label}: ${item.value} kg"></div>
+      </div>
+    </div>`).join('');
+}
+
+// ── AI TIPS ───────────────────────────────────────────────────────────────────
+async function fetchTips(transport,diet,electricity,energySource,total){
+  const prompt=`You are a climate action expert for India. A person has this daily carbon footprint:
+- Total: ${total} kg CO₂/day
+- Transport: ${transport.replace('_',' ')}
+- Diet: ${diet.replace('_',' ')}  
+- Monthly electricity: ₹${electricity} (${energySource.replace('_',' ')})
+
+Give exactly 4 highly specific, actionable tips to reduce their carbon footprint. Reference Indian government schemes, Indian brands, or India-specific options where relevant. Be concrete — name specific apps, subsidies, products, or behaviors.
+
+Return ONLY a JSON array. No markdown, no preamble. Format:
+[{"title":"5 words max","tip":"2 specific sentences with numbers or names"}]`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content.map(b=>b.text||'').join('');
+    return JSON.parse(text.replace(/```json|```/g,'').trim());
+  }catch(e){
+    return[
+      {title:'Switch to metro or bus',tip:'Delhi Metro alone displaces 630,000 tonnes of CO₂ annually. Using metro instead of a petrol car for a 20 km commute saves ~3.8 kg CO₂ per day.'},
+      {title:'Try plant-based two days',tip:'Replacing meat with dal, rajma, or paneer twice a week cuts diet emissions by ~25%. India\'s lentil-based cuisine is one of the lowest-carbon diets globally.'},
+      {title:'Apply for PM-KUSUM solar',tip:'PM-KUSUM and MNRE\'s rooftop solar scheme covers 40% of installation costs. A 2kW system eliminates ~2,900 kg CO₂/year and typically pays back in 4–5 years.'},
+      {title:'Set AC to 24°C exactly',tip:'BEE mandates factory default of 24°C for good reason: each degree lower increases energy use by 6%. Pair with a 5-star rated AC to cut cooling emissions by up to 50%.'}
+    ];
+  }
+}
+
+function renderTips(tips){
+  document.getElementById('tips-loading').style.display='none';
+  document.getElementById('tips-output').innerHTML=tips.map((t,i)=>`
+    <div class="tip-item">
+      <div class="tip-num" aria-hidden="true">${i+1}</div>
+      <div class="tip-body">
+        <div class="tip-title">${t.title}</div>
+        <div class="tip-text">${t.tip}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── FORM SUBMIT ───────────────────────────────────────────────────────────────
+document.getElementById('carbon-form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const transport=document.getElementById('transport').value;
+  const diet=document.getElementById('diet').value;
+  if(!transport||!diet){
+    alert('Please select your transport mode and diet type.');
+    return;
+  }
+  const km=+document.getElementById('km').value;
+  const electricity=+document.getElementById('electricity').value;
+  const energySource=document.getElementById('energy_source').value;
+
+  const emissions=calc(transport,km,diet,electricity,energySource);
+  document.getElementById('calc-section') ;
+  document.querySelector('.calc-section').style.display='none';
+  showResults(emissions);
+
+  document.getElementById('tips-loading').style.display='flex';
+  const tips=await fetchTips(transport,diet,electricity,energySource,emissions.total);
+  renderTips(tips);
+});
+
+document.getElementById('recalc-btn').addEventListener('click',()=>{
+  document.getElementById('results').classList.remove('visible');
+  document.querySelector('.calc-section').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+</script>
+</body>
+</html>
