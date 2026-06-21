@@ -1,0 +1,27 @@
+{
+  "name": "carbonsense",
+  "version": "2.0.0",
+  "description": "AI-powered carbon footprint awareness platform with India-specific actionable insights",
+  "main": "js/app.js",
+  "scripts": {
+    "test": "node tests/tests.js",
+    "start": "npx serve . -p 3000",
+    "lint": "echo 'No linter configured - vanilla JS project'"
+  },
+  "keywords": [
+    "carbon-footprint", "sustainability", "climate-action",
+    "india", "co2-calculator", "ai", "accessibility"
+  ],
+  "author": "Mukul <mukul24359@iiitd.ac.in>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mukul07777/carbon-tracker.git"
+  },
+  "homepage": "https://carbonsense-mukul.netlify.app",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}
